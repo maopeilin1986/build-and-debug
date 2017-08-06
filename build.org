@@ -1,0 +1,2 @@
+* build c++ project for debug with emacs using gdb
+** ./configure CFLAGS="-ggdb3 -O0" CXXFLAGS="-ggdb3 -O0"
