@@ -1,0 +1,85 @@
+* build steps
+    1. 从gerrit拉一份代码（不要从其他机器拷贝，会出现没有可执行权限的问题
+    2. ./install-deps.sh
+    3. ./autogen.sh
+    4. 修改src/civetweb/src/civet.c中的__VA_ARGS__为##__VA_ARGS__
+    5. ./configure CPPFLAGS=-DDEBUG CC="distcc gcc" CFLAGS="-ggdb3 -O0" CXX="distcc g++" CXXFLAGS="-ggdb3 -O0" LIBS=-lstdc++
+    6. echo build begin at > build-time-cost && date >> build-time-cost && make -j10 && echo build finish at >> build-time-cost && date >> build-time-cost && cat build-time-cost
+ 
+* initialize gdb
+    1. vi ~/.gdbinit
+    2. set print pretty on
+    3. set follow-fork-mode child
+
+* debug osd startup
+    1. ./stop.sh
+    2. 修改./vstart.sh脚本，将osd启动行注释掉
+    3. ./vstart.sh -n --mon_num 1 --osd_num 1 --mds_num 0
+    4. 启动gdb调试
+    5. set args -i 0 -c /root/code/debug/ceph/src/ceph.conf
+    6. 设置断点
+    7. run
+
+* debug osd startup after daemon
+    1. ./stop.sh
+    2. 编辑代码：在daemon()后加入kill(getpid(), SIGSTOP);
+    3. rebuild
+    4. ./vstart.sh -n --mon_num 1 --osd_num 1 --mds_num 0
+    5. ps -ef | grep ceph-mon | grep -v grep | awk '{print $2}' | xargs kill -s CONT
+    6. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | 查询osd的PID
+    7. Emacs: M-x gdb -i=mi /root/code/debug/ceph/src/ceph-osd 待调试的osd的PID
+    8. 等待加载符号表完成
+    9. 在kill(getpid(), SIGSTOP);的下一行设置断点
+    10. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | xargs kill -s CONT
+    11. 在gdb输入n，然后连按三次回车，调试开始
+
+* debug osd IO
+    1. ./stop.sh
+    2. ./vstart.sh -n --mon_num 1 --osd_num 3 --mds_num 0
+    3. ps -ef | grep ceph-osd | grep -v grep 查询待调试的osd的PID
+    4. 等待加载符号表完成
+    5. 设置断点
+    6. 在gdb输入n
+    7. 写入数据： echo test > test.txt && rados put test.obj test.txt -p test
+    8. 调试开始
+    9. 调试完成后continue
+    10. detach
+
+* debug mon startup
+    1. ./stop.sh
+    2. ./vstart.sh -n --mon_num 1 --osd_num 0 --mds_num 0
+    3. 修改配置文件ceph.conf，增加以下信息:    
+            [mon.b]
+                       host=onestorxx
+                       mon data = /root/code/debug/ceph/src/dev/mon.b
+                       mon addr = 本机IP：6790
+    4. ./ceph mon getmap -o ./monmap.txt
+    5. ./monmaptool --add b 本机IP：6790 --print ./monmap.txt
+    6. ./ceph osd getmap -o ./osdmap.txt
+    7. ./osdmaptool --print ./osdmap.txt
+    8. rm -rf ./dev/mon.b
+    9. ./ceph-mon --mkfs -c ./ceph.conf -i b --monmap=./monmap.txt --osdmap=./osdmap.txt --keyring=./keyring
+    10. 启动gdb调试
+    11. set args -c /root/code/debug/ceph/src/ceph.conf -i b --monmap=/root/code/debug/ceph/src/monmap.txt --keyring=/root/code/debug/ceph/src/keyring
+       
+       
+     
+      
+       
+       
+       
+       
+       
+       
+       
+       
+
+
+
+
+       
+       
+       
+        
+
+      
