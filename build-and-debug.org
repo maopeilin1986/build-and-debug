@@ -1,5 +1,5 @@
 * build steps
-    1. 从gerrit拉一份代码（不要从其他机器拷贝，会出现没有可执行权限的问题)
+    1. 从gerrit拉一份代码（不要从其他机器拷贝，会出现没有可执行权限的问题）
     2. ./install-deps.sh
     3. ./autogen.sh
     4. 修改src/civetweb/src/civet.c中的__VA_ARGS__为##__VA_ARGS__
