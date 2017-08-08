@@ -1,5 +1,5 @@
 * build steps
-    1. 从gerrit拉一份代码（不要从其他机器拷贝，会出现没有可执行权限的问题
+    1. 从gerrit拉一份代码（不要从其他机器拷贝，会出现没有可执行权限的问题)
     2. ./install-deps.sh
     3. ./autogen.sh
     4. 修改src/civetweb/src/civet.c中的__VA_ARGS__为##__VA_ARGS__
@@ -40,7 +40,7 @@
     4. 等待加载符号表完成
     5. 设置断点
     6. 在gdb输入n
-    7. 写入数据： echo test > test.txt && rados put test.obj test.txt -p test
+    7. 写入数据： echo test > test.txt && ./rados put test.obj test.txt -p test
     8. 调试开始
     9. 调试完成后continue
     10. detach
