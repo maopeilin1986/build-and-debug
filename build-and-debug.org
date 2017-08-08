@@ -40,7 +40,7 @@
     4. 等待加载符号表完成
     5. 设置断点
     6. 在gdb输入n
-    7. 写入数据： echo test > test.txt && ./rados put test.obj test.txt -p test
+    7. 写入数据： echo test > test.txt && ./rados put test.obj test.txt -p rbd
     8. 调试开始
     9. 调试完成后continue
     10. detach
