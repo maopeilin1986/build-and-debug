@@ -22,16 +22,19 @@
 
 * debug osd startup after daemon
     1. ./stop.sh
-    2. 编辑代码：在daemon()后加入kill(getpid(), SIGSTOP);
+    2. 编辑代码：在daemon()后加入
+    if (CEPH_ENTITY_TYPE_OSD == cct->get_module_type()) {
+        kill(getpid(), SIGSTOP);
+    }
     3. rebuild
     4. ./vstart.sh -n --mon_num 1 --osd_num 1 --mds_num 0
-    5. ps -ef | grep ceph-mon | grep -v grep | awk '{print $2}' | xargs kill -s CONT
-    6. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | 查询osd的PID
-    7. Emacs: M-x gdb -i=mi /root/code/debug/ceph/src/ceph-osd 待调试的osd的PID
-    8. 等待加载符号表完成
-    9. 在kill(getpid(), SIGSTOP);的下一行设置断点
-    10. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | xargs kill -s CONT
-    11. 在gdb输入n，然后连按三次回车，调试开始
+    
+    5. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | 查询osd的PID
+    6. Emacs: M-x gdb -i=mi /root/code/debug/ceph/src/ceph-osd 待调试的osd的PID
+    7. 等待加载符号表完成
+    8. 在kill(getpid(), SIGSTOP);的下一行设置断点
+    9. ps -ef | grep ceph-osd | grep -v grep | awk '{print $2}' | xargs kill -s CONT
+    10. 在gdb输入n，然后连按三次回车，调试开始
 
 * debug osd IO
     1. ./stop.sh
